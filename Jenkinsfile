@@ -5,7 +5,7 @@ pipeline {
     stage('Checkout Code') {
         steps {
             echo 'scm git'
-            git branch: 'main', url: 'https://github.com/adarsh0331/Project_7.git'
+            git branch: 'main', url: 'https://github.com/dussashivani/Project_08_CICD_Argocd_Prometheus_Grafana.git'
         }
     }
     
@@ -19,8 +19,8 @@ pipeline {
                           ${scannerHome}/bin/sonar-scanner \
                           -Dsonar.projectKey=my-devops-app \
                           -Dsonar.sources=. \
-                          -Dsonar.host.url=http://54.167.98.78:9000/ \
-                          -Dsonar.login=squ_1d768aa35185eaddb20ecdfbe32f0740c673b5f6
+                          -Dsonar.host.url=http://44.192.107.94:9000 \
+                          -Dsonar.login=squ_c196ecd2a0134d34f72c83fffc0c91beea7f8ae7
                        """
                     }
                 }
@@ -39,14 +39,14 @@ pipeline {
     steps{
         script{
             echo 'docker image build'
-        sh 'sudo docker build -t adarshbarkunta/nodejs:${BUILD_NUMBER} .'
+        sh 'sudo docker build -t shivanidussa/nodejs:${BUILD_NUMBER} .'
         }
     }
 }
 		
      stage('docker image scan'){
      steps{
-         sh "sudo trivy image adarshbarkunta/nodejs:${BUILD_NUMBER}"
+         sh "sudo trivy image shivanidussa/nodejs:${BUILD_NUMBER}"
      }
  }		
 
@@ -69,8 +69,8 @@ stage('Push image to ECR') {
        stage('Update Deployment File') {
 		
 		 environment {
-            GIT_REPO_NAME = "Project_7"
-            GIT_USER_NAME = "adarsh0331"
+            GIT_REPO_NAME = "Project_08_CICD_Argocd_Prometheus_Grafana"
+            GIT_USER_NAME = "dussashivani"
         }
 		
             steps {
@@ -78,8 +78,8 @@ stage('Push image to ECR') {
 				withCredentials([string(credentialsId: 'githubtoken', variable: 'githubtoken')]) 
 				{
                   sh '''
-                    git config user.email "adarsh@gmail.com"
-                    git config user.name "adarsh"
+                    git config user.email "shivanidussa@gmail.com"
+                    git config user.name "shivani"
                     BUILD_NUMBER=${BUILD_NUMBER}
                    #sed -i "s/mc:.*/mc:${BUILD_NUMBER}/g" deploymentfiles/deployment.yml
 					sed -i "s|image: .*|image: 526344317172.dkr.ecr.us-east-1.amazonaws.com/nodejs:$BUILD_NUMBER|" deploymentfiles/deployment.yml
