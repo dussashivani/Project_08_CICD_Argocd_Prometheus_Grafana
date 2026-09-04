@@ -52,10 +52,13 @@ pipeline {
 
 
 stage('Push image to ECR') {
-    steps {
-        withAWS(credentials: 'aws-creds', region: 'us-east-1') {
-            script {
-                sh '''
+    steps {        
+		withCredentials([
+            string(credentialsId: 'aws-access-key', variable: 'AWS_ACCESS_KEY_ID'),
+            string(credentialsId: 'aws-secret-key', variable: 'AWS_SECRET_ACCESS_KEY')
+        ]) {
+            sh '''
+                export AWS_DEFAULT_REGION=us-east-1
                   aws ecr get-login-password --region us-east-1 \
                   | sudo docker login --username AWS --password-stdin 518216637461.dkr.ecr.us-east-1.amazonaws.com
                   
